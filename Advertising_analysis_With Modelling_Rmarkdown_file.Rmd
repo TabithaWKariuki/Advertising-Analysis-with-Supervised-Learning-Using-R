@@ -1,0 +1,624 @@
+---
+title: "Advertising Analysis"
+author: "Tabitha Kariuki"
+date: "2022-07-15"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+
+# R Programming Exploratory Data Analysis
+
+## 1. Defining the Question
+
+**a) Specifying the Data Analytic Question**
+
+A Kenyan entrepreneur has created an online cryptography course and would want to advertise it on her blog. She currently targets audiences originating from various countries. In the past, she ran ads to advertise a related course on the same blog and collected data in the process. She would now like to employ your services as a Data Science Consultant to help her identify which individuals are most likely to click on her ads.
+
+**b) Defining the Metric for Success**
+
+1.Exhaustively apply the exploratory data analysis approaches while defining the question, the metric for success, the context, experimental design taken and the appropriateness of the available data to answer the given question.
+
+2.Perform univariate analysis by calculating and interpreting measures of central tendency for the set of data.
+
+3.Exhaustively perform bivariate analysis by creating relevant visualizations
+
+**c) Understanding the context**
+
+Perform Exploratory Data Analysis for the give data set <http://bit.ly/IPAdvertisingData>
+
+**d) Experimental design taken**
+
+1.Reading and checking our data
+
+2.Clean data by finding and dealing with outliers, anomalies, and missing data within the dataset.
+
+3.Perform univariate and bivariate analysis.
+
+4.From your insights provide a conclusion and recommendation.
+
+**e) Appropriateness of the available data**
+
+The dataset has appropriate columns and rows to answer the questions. The data is relevant for our analysis.
+
+## 2. Importing Libraries
+
+```{r}
+
+# install.package("data.table") # install package data.table to work with data tables
+library(data.table) # load package
+# install.package("tidyverse") # install packages to work with data frame - extends into visualization
+library(tidyverse) 
+```
+
+## 3. Loading our dataset
+
+```{r}
+# Loading our dataset into our environment
+
+ad <- fread('http://bit.ly/IPAdvertisingData')
+
+```
+
+## 4. Reading our dataset
+
+```{r}
+# Checking our top rows
+
+head(ad)
+```
+
+```{r}
+# Checking our bottom rows
+
+tail(ad)
+```
+
+```{r}
+# Checking the shape of our data
+
+dim(ad)
+```
+
+We have 1000 rows and 10 columns
+
+```{r}
+# Checking the class/datatypes
+
+str(ad)
+```
+
+```{r}
+# checking the attributes of our dataset
+
+class(ad)
+```
+
+## 5. Data Cleaning
+
+```{r}
+# Sum of null values in each column using the function colSums()
+
+colSums(is.na(ad))
+```
+
+**There are no missing values in our dataset**
+
+```{r}
+# Now lets find the duplicated rows in the dataset 
+# and assign to a variable duplicated_rows below
+
+duplicated_rows <- ad[duplicated(ad),]
+
+# Lets print out the variable duplicated_rows and see these duplicated rows 
+
+duplicated_rows
+```
+
+**There are no duplicated rows**
+
+```{r}
+# Checking for outliers in the Daily Time Spent on Site column
+
+boxplot(ad$'Daily Time Spent on Site')
+```
+
+**There are no outliers in the 'Daily Time Spent on Site' column**
+
+```{r}
+# Checking for outliers in the age column
+
+boxplot(ad$'Age')
+```
+
+**There are no outliers in the age column**
+
+```{r}
+# Checking for outliers in the Area Income column
+
+boxplot(ad$'Area Income')
+```
+
+**There are outliers in the 'area income' column. However we will not be dropping them since it is true representation of individual's income**
+
+```{r}
+# Checking for outliers in the Daily Internet Usage column
+
+boxplot(ad$'Daily Internet Usage')
+```
+
+**There are no outliers in the 'Daily Internet usage' column**
+
+# Exploratory Data Analysis
+
+## 6. Univariate Analysis
+
+```{r}
+# Summary statistics of our data
+
+summary(ad)
+```
+
+**Mean**
+
+```{r}
+mean(ad$"Daily Time Spent on Site")
+```
+
+**The average time spent on the site is 65 minutes.**
+
+```{r}
+mean(ad$"Age")
+```
+
+**The average age of repondents is 36 years.**
+
+```{r}
+mean(ad$"Area Income")
+```
+
+**The average income of repondents is 55000**
+
+```{r}
+mean(ad$"Daily Internet Usage")
+```
+
+**The average internet usage is 180.0 units**
+
+**Mode**
+
+```{r}
+# Unfotunately, R does not have a standard in-built function to calculate mode so we have to build one
+# We create the mode function that will perform our mode operation for us
+
+getmode <- function(v) {
+   uniqv <- unique(v)
+   uniqv[which.max(tabulate(match(v, uniqv)))]}
+```
+
+```{r}
+getmode(ad$Age)
+```
+
+**Most frequent age is 31 years**
+
+```{r}
+getmode(ad$`Daily Time Spent on Site`)
+```
+
+**Most frequent daily time spent is 62.26 minutes**
+
+```{r}
+getmode(ad$`Area Income`)
+```
+
+**Most common area income is 61833.9**
+
+```{r}
+getmode(ad$`Daily Internet Usage`)
+```
+
+**Most frequent units used for daily internet usage is 167.22.**
+
+**Median** **The median is the middle number in a sorted, ascending or descending list of numbers**
+
+```{r}
+median(ad$`Daily Time Spent on Site`)
+```
+
+```{r}
+median(ad$Age)
+```
+
+```{r}
+median(ad$`Area Income`)
+```
+
+```{r}
+median(ad$`Daily Internet Usage`)
+```
+
+**Min and Max Values/Otherwise known as Range**
+
+**Showing the highest and the least values in our numerical data**
+
+```{r}
+range(ad$Age)
+```
+
+```{r}
+range(ad$`Daily Time Spent on Site`)
+```
+
+```{r}
+range(ad$`Area Income`)
+```
+
+```{r}
+range(ad$`Daily Internet Usage`)
+```
+
+**Quantiles**
+
+Getting the first and the third quantile together with the range and the median using the quantile() function
+
+```{r}
+quantile(ad$Age)
+```
+
+```{r}
+quantile(ad$`Daily Time Spent on Site`)
+```
+
+```{r}
+quantile(ad$`Area Income`)
+```
+
+```{r}
+quantile(ad$`Daily Internet Usage`)
+```
+
+**Standard Deviation**
+
+A standard deviation (or σ) is a measure of how dispersed the data is in relation to the mean. Low standard deviation means data are clustered around the mean, and high standard deviation indicates data are more spread out.
+
+```{r}
+sd(ad$`Daily Time Spent on Site`)
+```
+
+```{r}
+sd(ad$Age)
+```
+
+```{r}
+sd(ad$`Area Income`)
+```
+
+```{r}
+sd(ad$`Daily Internet Usage`)
+```
+
+**Variance**
+
+The variance is a numerical measure of how the data values is dispersed around the mean.
+
+```{r}
+var(ad$`Daily Time Spent on Site`)
+```
+
+```{r}
+var(ad$Age)
+```
+
+```{r}
+var(ad$`Area Income`)
+```
+
+```{r}
+var(ad$`Daily Internet Usage`)
+```
+
+**Frequencies**
+
+```{r}
+# Gender Frequency Table
+# 0 for not male while 1 is male
+
+gender = table(ad$Male)
+gender
+```
+
+**519 respondents are not Male while 481 are male**
+
+```{r}
+# city Frequency Table
+
+city = table(ad$City)
+
+# Arranging cities from the most frequent and displaying the first 6 rows 
+
+highestcity <- sort(city, decreasing = TRUE)
+head(highestcity)
+```
+
+```{r}
+# country Frequency Table
+
+country = table(ad$Country)
+
+# Arranging countries from the least frequent and displaying the first 6 rows 
+
+countries <- sort(country, increasing = TRUE)
+head(countries)
+```
+
+```{r}
+# clicked on ad Frequency Table
+
+clickad = table(ad$`Clicked on Ad`)
+clickad
+```
+
+```{r}
+# clicked on ad Frequency Table
+
+clickad = table(ad$`Clicked on Ad`)
+clickad
+
+```
+
+**Half of the respondents clicked on ad**
+
+**Barplots**
+
+The box plot of an observation variable is a graphical representation based on its quantiles, as well as its smallest and largest values. It attempts to provide a visual shape of the data distribution.
+
+```{r}
+# Fits we get the frequency distribution table
+
+age <- table(ad$Age)
+
+# Then we plot a bar chart 
+
+barplot(age, xlab ='Age', ylab ='Frequency', main ='Age BarPlot', col = 'red')
+```
+
+```{r}
+# Gender barplot
+
+barplot(gender, xlab = 'Gender', ylab = 'Count', main = 'Gender Bar Chart', col = "yellow")
+```
+
+**Histograms**
+
+```{r}
+# Plot a histogram for the age column
+
+hist(ad$Age, xlab = 'Age', main = 'Histogram for Age', col = 'brown')
+```
+
+## 7. BiVariate Analysis\*\*
+
+**Which Gender clicked the most ads**
+
+```{r}
+# Creating a dataframe for those who clicked the ad
+
+clicked <- ad[ad$'Clicked on Ad'==1,]
+head(clicked)
+```
+
+```{r}
+
+genderclicks<- table(clicked$Male)
+label<- c("Female","male")
+barplot(genderclicks,names.arg=label,main="Gender Clicks", col = 'green')
+```
+
+```{r}
+
+ageDist<- table(clicked$Age)
+barplot(ageDist,main="age distribution", col = 'blue')
+```
+
+**Covariance**
+
+```{r}
+# We can find the covariance between age and the daily time spent on the site
+
+age <- ad$Age
+time <- ad$"Daily Time Spent on Site"
+
+cov(age, time)
+```
+
+**There is a negative covariance between age and the daily time spent on the site which means that the older a person is, the less time they spend on the site daily.**
+
+```{r}
+# We can find the covariance between age and the internet units
+
+age <- ad$Age
+units <- ad$`Daily Internet Usage`
+
+cov(age, units)
+```
+
+**There is a negative covariance between age and the daily internet usage on the site which means that the older a person gets, the less time they spend on daily internet usage.**
+
+```{r}
+# Scatter plot showing distribution of age and time spent on site
+
+plot(age, time, xlab = 'Age', ylab = 'Daily Time Spent on Site', main = 'Age and Daily Time Spent', col = 'green')
+```
+
+```{r}
+# Scatter plot showing distribution of age and Internet usage
+
+plot(age, units, xlab = 'Age', ylab = 'Daily Internet Usage', main = 'Age And Daily Internet Usage', col = "green")
+```
+
+**Observations**
+
+1.  There were more females than males in our data.
+
+2.  The data had 500 individuals who clicked on the ads while 500 individuals did not click on the ads.
+
+3.  Czech Republic and France both had the highest number of respondents.
+
+4.  The average area income is 55000.
+
+5.  The average age of most audience is 36 years with most of the audience being around the age of 31.
+
+6.  Lisamouth and Williamsport cities both had the highest number of individuals (3) in the dataset.
+
+7.  There are more females visiting the site compared to males as well as clicking the ads.
+
+## 8. Modeling (Supervised Learning)
+
+```{r}
+# We first preview our data
+
+head(ad)
+```
+
+```{r}
+# Applying the lm() function.
+
+multiple_lm <- lm(`Clicked on Ad` ~ ., ad)
+```
+
+```{r}
+# Generating the anova table
+
+anova(multiple_lm)
+```
+
+```{r}
+# Then performing our prediction 
+
+pred2 <- predict(multiple_lm, ad)
+
+# Printing out our result
+
+pred2
+
+```
+
+**Cross Validation**
+
+```{r
+# Cross Validation 
+
+set.seed(42)
+
+multiple_lm2 <- train(`Clicked on Ad` ~ ., ad,
+                      method = "lm", 
+                      trControl = trainControl(method = "cv", 
+                                               number = 10, 
+                                               verboseIter = FALSE))
+summary(multiple_lm2)
+
+multiple_lm2
+```
+
+```{r
+# Once we have trained our model, we can directly use this train object as input to the predict method:
+
+pred3 <- predict(multiple_lm2, ad)
+
+error <- pred3 - diamonds$price
+
+rmse_xval <- sqrt(mean(error^2)) ## xval RMSE
+
+rmse_xval
+
+# Console outcome Warning: prediction from a rank-deficient fit may be misleadingWarning: longer object length is not a multiple of shorter object length[1] 5601.632
+```
+
+**RMSE OF 5601.632. A high RMSE show low accuracy**
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+library(lattice)
+```
+
+```{r}
+library(caret)
+```
+
+```{r}
+library(mlbench)
+```
+
+**SVM**
+
+```{r}
+# Splitting our data
+
+intrain <- createDataPartition(y = ad$`Area Income`, p= 0.7, list = FALSE)
+training <- ad[intrain,]
+testing <- ad[-intrain,]
+```
+
+```{r}
+# We check the dimensions of out training dataframe and testing dataframe
+
+dim(training)
+```
+
+```{r}
+# We check the dimensions of out training dataframe and testing dataframe
+ 
+dim(testing)
+```
+
+```{r}
+# We then clean the data using the anyNA() method that checks for any null values.
+# ---
+#  
+anyNA(ad)
+```
+
+```{r}
+# Then check the summary of our data by using the summary() function
+# ---
+#  
+summary(ad)
+```
+
+```{r}
+training[["Clicked on Ad"]] = factor(training[["Clicked on Ad"]])
+
+```
+
+```{r}
+
+trctrl <- trainControl(method = "repeatedcv", number = 10, repeats = 3)
+
+svm_Linear <- train(`Area Income` ~., data = training, method = "svmLinear", 
+                    trControl=trctrl, 
+                    preProcess = c("center", "scale"), 
+                    tuneLength = 10)
+```
+
+**Failure to scale data.**
+
+```{r}
+# We can then check the result of our train() model as shown below
+# ---
+# 
+svm_Linear
+```
+
+
+**RMSE OF 13291. The model performed much worse. The model is not a good fit**
+
+## 9. Recommendations
+
+1.  Individuals who are of the female gender and are between 28 and 36 years old were the most in our data set, therefore she should creates an ad that targets these individuals
+
+2.  Most of the those who click on the ad have an area income of 55000, so maybe reevaluate the prices to accommodate other income levels.
